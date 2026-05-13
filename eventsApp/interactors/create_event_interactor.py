@@ -1,7 +1,7 @@
 from eventsApp.interactors.storage_interfaces.event_storage_interface import EventStorageInterface
 from eventsApp.interactors.presenter_interfaces.event_presenter_interface import EventPresenterInterface
 
-from eventsApp.exceptions.exceptions import OrganizerNotFoundException, InvalidDataException
+from eventsApp.exceptions.exceptions import OrganizerNotFoundException, InvalidDataException, UserCannotCreateEventException
 
 class CreateEventInteractor:
     def __init__(self, storage:EventStorageInterface, presenter: EventPresenterInterface):
@@ -23,6 +23,8 @@ class CreateEventInteractor:
 
         if not organizer:
             raise OrganizerNotFoundException("Organizer is not found")
+        if organizer.role != 'organizer':
+            raise UserCannotCreateEventException('Only organizer can create the event')
         if not (event_title and description and start_date and organizer and end_date and venue and maximum_attendees):
             raise InvalidDataException("Data can't be empty")
         if ticket_price is None:

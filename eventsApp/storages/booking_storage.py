@@ -1,4 +1,4 @@
-from eventsApp.models import Event, Person, Ticket, Booking
+from eventsApp.models import Event, User, Ticket, Booking
 from django.db.models import Q
 
 class BookingStorage:
@@ -9,8 +9,8 @@ class BookingStorage:
             return None
     def get_attendee_by_id(self, attendee_id):
         try:
-            return Person.objects.get(id=attendee_id)
-        except Person.DoesNotExist:
+            return User.objects.get(id=attendee_id)
+        except User.DoesNotExist:
             return None
     
     def seats_available(self, event_id):
@@ -23,6 +23,7 @@ class BookingStorage:
         if current_seats_count< maximum_seats:
             return True
         else:
+
             return False
     
     def is_already_booked(self, bookingDto):
@@ -45,7 +46,7 @@ class BookingStorage:
         except Booking.DoesNotExist:
             return None
 
-    def create_booking(self, bookingDto):
+    def create_booking(self, bookingDto, bookingStatus):
         self.bookingDto = bookingDto
         event_id = bookingDto.event_id
         attendee_id = bookingDto.attendee_id
@@ -54,7 +55,7 @@ class BookingStorage:
         response = Booking.objects.create(
             attendee_id = attendee_id,
             event_id = event_id,
-            booking_status = "booked",
+            booking_status = bookingStatus,
             ticket=ticket
         )
 
@@ -71,6 +72,7 @@ class BookingStorage:
         existing_booking.booking_status = 'booked'
         existing_booking.save()
         return existing_booking.id
+
         
     def get_booking_details_by_id(self, booking_id):
         try:
@@ -81,6 +83,7 @@ class BookingStorage:
     def cancel_booking(self, bookingDto):
         booking_id = bookingDto.booking_id
         attendee_id = bookingDto.attendee_id
+        event_id = bookingDto.event_id
         try:
             existing_booking = Booking.objects.get(Q(id=booking_id), Q(attendee_id=attendee_id))
         except Booking.DoesNotExist:
@@ -92,4 +95,11 @@ class BookingStorage:
 
         existing_booking.booking_status = 'cancelled'
         existing_booking.save()
+        
+        first_waitlisted_user = Booking.objects.filter(event_id=event_id, booking_status='waitlisted').order_by('booking_date').first()
+        
+        if first_waitlisted_user:
+            first_waitlisted_user.booking_status = 'booked'
+            first_waitlisted_user.save()
+
         return True

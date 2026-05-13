@@ -17,7 +17,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+# def trigger_error(request):
+#     division_by_zero = 1 / 0
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('event/', include('eventsApp.urls'))
+    # path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('api/token/', TokenObtainPairView.as_view()),
+    path('api/token/refresh/', TokenRefreshView.as_view()),
+    path('event/', include('eventsApp.urls')),
+    # path('sentry-debug/', trigger_error)
 ]
+
+
+

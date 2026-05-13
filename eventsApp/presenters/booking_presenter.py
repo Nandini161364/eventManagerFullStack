@@ -21,7 +21,7 @@ class BookingPresenter:
         }
     def seats_full(self):
         return {
-            "message": "Tickets already full"
+            "message": "Your booking is waitlisted as Tickets are already full"
         }
     def already_booked(self):
         return {

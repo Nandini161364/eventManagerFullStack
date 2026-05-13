@@ -1,4 +1,4 @@
-from eventsApp.models import Event, Feedback, Booking, Person
+from eventsApp.models import Event, Feedback, Booking, User
 
 class FeedbackStorage:
     def is_valid_event(self, eventId):
@@ -8,8 +8,8 @@ class FeedbackStorage:
             return None 
     def is_valid_user(self, attendeeId):
         try:
-            return Person.objects.get(id=attendeeId)
-        except Person.DoesNotExist:
+            return User.objects.get(id=attendeeId)
+        except User.DoesNotExist:
             return None
             
     def get_booking(self, feedbackDto):

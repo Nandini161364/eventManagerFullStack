@@ -27,3 +27,8 @@ class EventNotFoundException(Exception):
 
 class InvalidBookingException(Exception):
     pass
+
+class UserCannotCreateEventException(Exception):
+    pass
+class UserCannotAccessEventException(Exception):
+    pass

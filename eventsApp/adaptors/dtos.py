@@ -16,10 +16,12 @@ class CreateEventDTO:
     ticket_price: float
 
 @dataclass
-class CreatePersonDTO:
-    name: str
+class CreateUserDTO:
+    username: str
     email: str
     password: str
+    phone_number: str
+    role: str
 
 @dataclass
 class CreateBookingDto:
@@ -30,11 +32,10 @@ class CreateBookingDto:
 class CancelBookingDto:
     booking_id: int
     attendee_id: int
+    event_id: int
 
 @dataclass
 class OrganizerDetailsDto:
-    organization_name: str
-    organization_email: str
     organizer_name: str
     organizer_email:str
     organizer_id: int
@@ -63,6 +64,10 @@ class EventDetailsDto:
     booking_cancelled_users: List[AttendeeDetailsDto]
     booking_pending_users: List[AttendeeDetailsDto]
     ticket_details: List[TicketDetailsDto]
+    total_bookings_count: int
+    cancelled_bookings_count: int
+    pending_bookings_count: int
+    available_seats: int
 
 @dataclass
 class FeedbackDto:

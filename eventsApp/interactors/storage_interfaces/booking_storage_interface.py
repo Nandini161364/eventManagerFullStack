@@ -10,7 +10,7 @@ class BookingStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def create_booking(self, bookingDto:CreateBookingDto):
+    def create_booking(self, bookingDto:CreateBookingDto, booking_status:str):
         pass
 
     @abstractmethod

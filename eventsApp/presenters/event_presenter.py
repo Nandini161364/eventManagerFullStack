@@ -18,10 +18,14 @@ class EventPresenter(EventPresenterInterface):
         return {
             "message": "Event not found"
         }
-    # def dummy_event(self):
-    #     return {
-    #         "message": "Dummy Function"
-    #     }
+    def no_access(self):
+        return {
+            "message": "User has no permission for event creation, organizer only can create"
+        }
+    def no_permission(self):
+        return {
+            "message": "User doesn't have permission to access the details"
+        }
 
     def get_event_details_success_response(self, eventDetailsDto):
         return {
@@ -35,8 +39,6 @@ class EventPresenter(EventPresenterInterface):
             'organizer_details': [
                 {
                     'organizer_id': organizer.organizer_id,
-                    'organization_name': organizer.organization_name,
-                    'organization_email':organizer.organization_email,
                     'organizer_email':organizer.organizer_email,
                     'organizer_name': organizer.organizer_name,
                 } for organizer in eventDetailsDto.organizer_details
@@ -67,5 +69,9 @@ class EventPresenter(EventPresenterInterface):
                 {
                     'ticket_price': ticket.ticket_price
                 } for ticket in eventDetailsDto.ticket_details
-            ]
+            ],
+            'total_bookings_count': eventDetailsDto.total_bookings_count,
+            'cancelled_bookings_count': eventDetailsDto.cancelled_bookings_count,
+            'pending_bookings_count': eventDetailsDto.pending_bookings_count,
+            'available_seats': eventDetailsDto.available_seats
         }

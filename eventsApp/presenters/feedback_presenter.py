@@ -12,7 +12,7 @@ class FeedbackPresenter:
     
     def invalid_event(self):
         return {
-            "message": "Attendee not found"
+            "message": "Event not found"
         }
     
     def invalid_data(self):

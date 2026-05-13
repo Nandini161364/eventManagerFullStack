@@ -9,6 +9,7 @@ type EventCardProps = {
 const EventCard = (props: EventCardProps) => {
   const {eventDetails, onOpenEvent} = props
 
+  
   return (
     <article className="event-card" onClick={() => onOpenEvent(eventDetails)}>
       <div className="event-card-header">

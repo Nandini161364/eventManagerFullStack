@@ -82,3 +82,11 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"{self.booking.attendee.username} - {self.booking.event.event_title} - {self.rating}" if self.booking else "No booking found"
+    
+# class Attendance(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='attendance')
+#     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='attendance')
+#     attended_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    
+#     class Meta:
+#         unique_together = ('user', 'event')

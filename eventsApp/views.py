@@ -30,7 +30,65 @@ from eventsApp.interactors.feedback_interactor import FeedBackInteractor
 from eventsApp.exceptions.exceptions import OrganizerNotFoundException, InvalidDataException, UserAlreadyExitsException, EventDoesnotExistException, AttendeeDoesnotExist, TicketsNotAvailableException, AlreadyBookedException, InvalidBookingIdException, EventNotFoundException, InvalidBookingException, UserCannotCreateEventException, UserCannotAccessEventException
 
 from django.contrib.auth import get_user_model
+from eventsApp.models import Booking, Event, Ticket
 User = get_user_model()
+
+
+def serialize_event(event, user):
+    user_booking = Booking.objects.filter(event=event, attendee=user).first()
+
+    ticket = event.tickets.first()
+
+    return {
+        "id": event.id,
+        "event_title": event.event_title,
+        "description": event.description,
+        "start_date": event.start_date,
+        "end_date": event.end_date,
+        "venue": event.venue,
+        "is_paid": event.is_paid,
+        "maximum_attendees": event.maximum_attendees,
+        "available_seats": event.maximum_attendees - event.bookings.filter(booking_status='booked').count(),
+        "ticket_price": ticket.price if ticket else 0,
+        "organizer_name": event.organizer.username,
+        "booking_id": user_booking.id if user_booking else None,
+        "booking_status": user_booking.booking_status if user_booking else None,
+    }
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    user = request.user
+
+    return Response({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "phone_number": user.phone_number,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_events(request):
+    user = request.user
+
+    if user.role == 'organizer':
+        events = Event.objects.filter(organizer=user).select_related('organizer').prefetch_related('tickets', 'bookings').order_by('-start_date')
+        booked_events = Event.objects.filter(bookings__attendee=user).select_related('organizer').prefetch_related('tickets', 'bookings').distinct().order_by('-start_date')
+
+        return Response({
+            "events": [serialize_event(event, user) for event in events],
+            "booked_events": [serialize_event(event, user) for event in booked_events],
+        })
+    else:
+        events = Event.objects.filter(is_active=True).select_related('organizer').prefetch_related('tickets', 'bookings').order_by('start_date')
+
+    return Response({
+        "events": [serialize_event(event, user) for event in events],
+    })
 
 
 @api_view(['POST'])

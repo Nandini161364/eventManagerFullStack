@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from eventsApp.models import Booking, Event, User, Ticket
 from eventsApp.interactors.storage_interfaces.event_storage_interface import EventStorageInterface
@@ -53,7 +53,7 @@ class EventStorage(EventStorageInterface):
             ),
             Prefetch(
                 'bookings',
-                queryset=booking_queryset.filter(booking_status='pending'),
+                queryset=booking_queryset.filter(Q(booking_status='pending') | Q(booking_status='waitlisted')),
                 to_attr='pending_bookings',
             ),
         ).get(id=event_id)
